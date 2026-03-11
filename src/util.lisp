@@ -197,7 +197,7 @@
 
 (defun sha256-process-block (block hash)
   "Process a 64-byte block."
-  (declare (type (simple-array (unsigned-byte 8) (64)) block)
+  (declare (type (vector (unsigned-byte 8)) block)
            (type (simple-array (unsigned-byte 32) (8)) hash))
   (let ((w (make-array 64 :element-type '(unsigned-byte 32))))
     ;; Prepare message schedule
