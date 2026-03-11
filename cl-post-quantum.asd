@@ -4,7 +4,7 @@
 
 (asdf:defsystem #:cl-post-quantum
   :version "1.0.0"
-  :author "CLPIC Contributors"
+  :author "Parkian Company LLC"
   :license "MIT"
   :description "Pure Common Lisp implementation of post-quantum cryptographic algorithms"
   :long-description
@@ -40,7 +40,7 @@
 
 (asdf:defsystem #:cl-post-quantum/test
   :version "1.0.0"
-  :author "CLPIC Contributors"
+  :author "Parkian Company LLC"
   :license "MIT"
   :description "Tests for CL-POST-QUANTUM"
   :depends-on (#:cl-post-quantum)
