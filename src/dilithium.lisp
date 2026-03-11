@@ -483,7 +483,7 @@
                         (unless (> h-count omega)
                           ;; Success! Encode signature
                           (return
-                            (dilithium-encode-signature params c-seed z h)))))))))))))))))
+                            (dilithium-encode-signature params c-seed z h)))))))))))))))
 
 ;;; ============================================================================
 ;;; Verification

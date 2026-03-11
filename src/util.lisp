@@ -155,7 +155,7 @@
 ;;; SHA-256 Implementation
 ;;; ============================================================================
 
-(defconstant +sha256-k+
+(defvar *sha256-k*
   #(#x428a2f98 #x71374491 #xb5c0fbcf #xe9b5dba5 #x3956c25b #x59f111f1 #x923f82a4 #xab1c5ed5
     #xd807aa98 #x12835b01 #x243185be #x550c7dc3 #x72be5d74 #x80deb1fe #x9bdc06a7 #xc19bf174
     #xe49b69c1 #xefbe4786 #x0fc19dc6 #x240ca1cc #x2de92c6f #x4a7484aa #x5cb0a9dc #x76f988da
@@ -166,11 +166,11 @@
     #x748f82ee #x78a5636f #x84c87814 #x8cc70208 #x90befffa #xa4506ceb #xbef9a3f7 #xc67178f2)
   "SHA-256 round constants.")
 
-(defconstant +sha256-init+
+(defvar *sha256-init*
   #(#x6a09e667 #xbb67ae85 #x3c6ef372 #xa54ff53a #x510e527f #x9b05688c #x1f83d9ab #x5be0cd19)
   "SHA-256 initial hash values.")
 
-(declaim (inline sha256-rotr sha256-ch sha256-maj sha256-sigma0 sha256-sigma1 sha256-Sigma0 sha256-Sigma1))
+(declaim (inline sha256-rotr sha256-ch sha256-maj sha256-sigma0 sha256-sigma1 sha256-big-sigma0 sha256-big-sigma1))
 
 (defun sha256-rotr (x n)
   (declare (type (unsigned-byte 32) x)
@@ -189,10 +189,10 @@
 (defun sha256-sigma1 (x)
   (logxor (sha256-rotr x 17) (sha256-rotr x 19) (ash x -10)))
 
-(defun sha256-Sigma0 (x)
+(defun sha256-big-sigma0 (x)
   (logxor (sha256-rotr x 2) (sha256-rotr x 13) (sha256-rotr x 22)))
 
-(defun sha256-Sigma1 (x)
+(defun sha256-big-sigma1 (x)
   (logxor (sha256-rotr x 6) (sha256-rotr x 11) (sha256-rotr x 25)))
 
 (defun sha256-process-block (block hash)
@@ -221,13 +221,17 @@
       ;; Main loop
       (loop for i from 0 below 64
             do (let* ((t1 (logand #xFFFFFFFF
-                                  (+ h (sha256-Sigma1 e) (sha256-ch e f g)
-                                     (aref +sha256-k+ i) (aref w i))))
+                                  (+ h (sha256-big-sigma1 e) (sha256-ch e f g)
+                                     (aref *sha256-k* i) (aref w i))))
                       (t2 (logand #xFFFFFFFF
-                                  (+ (sha256-Sigma0 a) (sha256-maj a b c)))))
-                 (setf h g g f f e
+                                  (+ (sha256-big-sigma0 a) (sha256-maj a b c)))))
+                 (setf h g
+                       g f
+                       f e
                        e (logand #xFFFFFFFF (+ d t1))
-                       d c c b b a
+                       d c
+                       c b
+                       b a
                        a (logand #xFFFFFFFF (+ t1 t2)))))
       ;; Update hash
       (setf (aref hash 0) (logand #xFFFFFFFF (+ (aref hash 0) a)))
@@ -250,7 +254,7 @@
          (pad-len (if (minusp pad-len) (+ pad-len 64) pad-len))
          (total-len (+ msg-len 1 pad-len 8))
          (padded (make-octet-vector total-len))
-         (hash (copy-seq +sha256-init+)))
+         (hash (copy-seq *sha256-init*)))
     ;; Copy message and add padding
     (replace padded message)
     (setf (aref padded msg-len) #x80)
@@ -280,7 +284,7 @@
 
 (defconstant +keccak-rounds+ 24)
 
-(defconstant +keccak-rc+
+(defvar *keccak-rc*
   #(#x0000000000000001 #x0000000000008082 #x800000000000808a #x8000000080008000
     #x000000000000808b #x0000000080000001 #x8000000080008081 #x8000000000008009
     #x000000000000008a #x0000000000000088 #x0000000080008009 #x000000008000000a
@@ -289,11 +293,11 @@
     #x8000000080008081 #x8000000000008080 #x0000000080000001 #x8000000080008008)
   "Keccak round constants.")
 
-(defconstant +keccak-rho+
+(defvar *keccak-rho*
   #(0 1 62 28 27 36 44 6 55 20 3 10 43 25 39 41 45 15 21 8 18 2 61 56 14)
   "Keccak rotation offsets.")
 
-(defconstant +keccak-pi+
+(defvar *keccak-pi*
   #(0 10 20 5 15 16 1 11 21 6 7 17 2 12 22 23 8 18 3 13 14 24 9 19 4)
   "Keccak permutation indices.")
 
@@ -327,8 +331,8 @@
               (logxor (aref state i) (aref d (mod i 5)))))
       ;; Rho and Pi
       (dotimes (i 25)
-        (setf (aref b (aref +keccak-pi+ i))
-              (keccak-rotl64 (aref state i) (aref +keccak-rho+ i))))
+        (setf (aref b (aref *keccak-pi* i))
+              (keccak-rotl64 (aref state i) (aref *keccak-rho* i))))
       ;; Chi
       (dotimes (y 5)
         (let ((y5 (* y 5)))
@@ -338,7 +342,7 @@
                           (logand (lognot (aref b (+ y5 (mod (+ x 1) 5))))
                                   (aref b (+ y5 (mod (+ x 2) 5)))))))))
       ;; Iota
-      (setf (aref state 0) (logxor (aref state 0) (aref +keccak-rc+ round)))))
+      (setf (aref state 0) (logxor (aref state 0) (aref *keccak-rc* round)))))
   state)
 
 (defun keccak-absorb (state data rate)
