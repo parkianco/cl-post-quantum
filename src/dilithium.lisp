@@ -462,9 +462,9 @@
                                               +dilithium-q+))
                                    (w0 (dilithium-lowbits wcs2 gamma2)))
                               (when (>= (abs w0) (- gamma2 beta))
-                                (setf reject t)))))))
+                                (setf reject t)))))
 
-                    (unless reject
+                      (unless reject
                       ;; Compute hint h
                       (let ((h (make-array k))
                             (h-count 0))
@@ -486,7 +486,7 @@
                         (unless (> h-count omega)
                           ;; Success! Encode signature
                           (return
-                            (dilithium-encode-signature params c-seed z h)))))))))))))))
+                            (dilithium-encode-signature params c-seed z h))))))))))))))))))
 
 ;;; ============================================================================
 ;;; Verification
