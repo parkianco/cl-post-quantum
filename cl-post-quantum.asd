@@ -51,4 +51,6 @@
     :components
     ((:file "test-pq"))))
   :perform (test-op (o c)
-             (uiop:symbol-call :cl-post-quantum/test :run-all-tests)))
+             (let ((result (uiop:symbol-call :cl-post-quantum/test :run-all-tests)))
+               (unless result
+                 (error "Tests failed")))))
