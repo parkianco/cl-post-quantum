@@ -1,9 +1,12 @@
+;; Copyright (c) 2024-2026 Parkian Company LLC. All rights reserved.
+;; SPDX-License-Identifier: BSD-3-Clause
+
 ;;;; cl-post-quantum.asd - Post-Quantum Cryptography for Common Lisp
 ;;;;
 ;;;; SPDX-License-Identifier: MIT
 
 (asdf:defsystem #:cl-post-quantum
-  :version "1.0.0"
+  :version "0.1.0"
   :author "Parkian Company LLC"
   :license "MIT"
   :description "Pure Common Lisp implementation of post-quantum cryptographic algorithms"
@@ -36,10 +39,10 @@
      (:file "kyber")     ; CRYSTALS-Kyber KEM
      (:file "dilithium") ; CRYSTALS-Dilithium signatures
      )))
-  :in-order-to ((test-op (test-op #:cl-post-quantum/test))))
+  :in-order-to ((asdf:test-op (test-op #:cl-post-quantum/test))))
 
 (asdf:defsystem #:cl-post-quantum/test
-  :version "1.0.0"
+  :version "0.1.0"
   :author "Parkian Company LLC"
   :license "MIT"
   :description "Tests for CL-POST-QUANTUM"
@@ -50,7 +53,7 @@
     :serial t
     :components
     ((:file "test-pq"))))
-  :perform (test-op (o c)
+  :perform (asdf:test-op (o c)
              (let ((result (uiop:symbol-call :cl-post-quantum/test :run-all-tests)))
                (unless result
                  (error "Tests failed")))))
