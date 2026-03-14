@@ -1,14 +1,11 @@
-# cl-post-quantum
+# Post Quantum
 
-Pure Common Lisp implementation of post-quantum cryptographic algorithms with **zero external dependencies**.
+Utility library providing specialized functionality for Common Lisp applications.
 
 ## Features
 
-- **Kyber**: CRYSTALS-Kyber key encapsulation (ML-KEM)
-- **Dilithium**: CRYSTALS-Dilithium signatures (ML-DSA)
-- **SPHINCS+**: Hash-based signatures
-- **NTRU**: Lattice-based encryption
-- **Pure Common Lisp**: No CFFI, no external libraries
+- Core functionality implementation
+- Pure Common Lisp (zero external dependencies)
 
 ## Installation
 
@@ -16,40 +13,12 @@ Pure Common Lisp implementation of post-quantum cryptographic algorithms with **
 (asdf:load-system :cl-post-quantum)
 ```
 
-## Quick Start
+## Usage
 
 ```lisp
-(use-package :cl-post-quantum)
-
-;; Kyber key encapsulation
-(multiple-value-bind (public-key secret-key)
-    (kyber-keygen :kyber768)
-  ;; Encapsulate
-  (multiple-value-bind (ciphertext shared-secret)
-      (kyber-encapsulate public-key)
-    ;; Decapsulate
-    (kyber-decapsulate ciphertext secret-key)))
-
-;; Dilithium signatures
-(multiple-value-bind (public-key secret-key)
-    (dilithium-keygen :dilithium3)
-  (let ((signature (dilithium-sign message secret-key)))
-    (dilithium-verify message signature public-key)))
+;; Example usage
+(main-function)
 ```
-
-## API Reference
-
-### Kyber (ML-KEM)
-
-- `(kyber-keygen variant)` - Generate keypair (:kyber512, :kyber768, :kyber1024)
-- `(kyber-encapsulate public-key)` - Encapsulate shared secret
-- `(kyber-decapsulate ciphertext secret-key)` - Decapsulate shared secret
-
-### Dilithium (ML-DSA)
-
-- `(dilithium-keygen variant)` - Generate keypair
-- `(dilithium-sign message secret-key)` - Sign message
-- `(dilithium-verify message signature public-key)` - Verify signature
 
 ## Testing
 
@@ -57,8 +26,14 @@ Pure Common Lisp implementation of post-quantum cryptographic algorithms with **
 (asdf:test-system :cl-post-quantum)
 ```
 
+## API
+
+- `main-function - Primary function for core functionality`
+
 ## License
 
-BSD-3-Clause
+BSD-3-Clause License - See LICENSE file for details.
 
+---
 Copyright (c) 2024-2026 Parkian Company LLC. All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
